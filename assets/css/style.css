@@ -81,6 +81,19 @@ p {
     font-size: 2em;
     background-color: white;
     flex: 1;
+    cursor: pointer;
+    transition: all .05s ease;
+}
+
+#calculator button:hover {
+    border: 2px solid white;
+}
+
+#calculator button.clicked {
+    transform: scale(1.1);
+    background-color: lightslategray !important;
+    color: white;
+    border: 2px solid white;
 }
 
 #calculator button.clear {
