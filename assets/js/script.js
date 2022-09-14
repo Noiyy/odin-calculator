@@ -3,7 +3,6 @@ let _x = 0;
 let _y = 0;
 let _operator;
 let result = 0;
-let previousValue = "";
 
 const buttons = document.querySelectorAll("button");
 const displayMainText = document.querySelector(".display h3");
@@ -13,18 +12,10 @@ const operatorButtons = document.querySelectorAll(".sidebar button");
 const equalsBtn = document.querySelector("button.equals");
 const clearBtn = document.querySelector("button.clear");
 
-function add(x, y) {
-    return x + y;
-}
-function subtract(x, y) {
-    return x - y;
-}
-function multiply(x, y) {
-    return x * y;
-}
-function divide(x, y) {
-    return x / y;
-}
+const add = (x, y) => x + y;
+const subtract = (x, y) => x - y;
+const multiply = (x, y) => x * y;
+const divide = (x, y) => x / y;
 
 function operate(operator, x, y) {
     if (!result) displayPrevText.textContent += "=";
@@ -49,12 +40,8 @@ buttons.forEach(btn => {
     btn.addEventListener("click", buttonClicked);
     btn.addEventListener("transitionend", removeTransition);
 });
-numButtons.forEach(btn => {
-    btn.addEventListener("click", clickedNum);
-});
-operatorButtons.forEach(btn => {
-    btn.addEventListener("click", clickedOperator);
-});
+numButtons.forEach(btn => btn.addEventListener("click", clickedNum));
+operatorButtons.forEach(btn => btn.addEventListener("click", clickedOperator));
 equalsBtn.addEventListener("click", clickedEquals);
 clearBtn.addEventListener("click", clearCalculator);
 
@@ -70,16 +57,20 @@ function clickedEquals() {
     _y = Number(value);
     if (_y == 0 && _operator == "/") {
         alert("You cannot divide by zero!");
-        displayPrevText.textContent = displayPrevText.textContent.slice(0, displayPrevText.textContent.length-1);
+        displayPrevText.textContent = displayPrevText.textContent.slice(0, displayPrevText.textContent.length);
         return;
     }
+    displayPrevText.textContent += `${_y} `;
     operate(_operator, _x, _y);
 }
 
 function clickedNum(e) {
-    if (this.classList.contains("equals")) return;
+    let isDecimal = displayMainText.textContent.includes(".") && this.classList.contains("decimal");
+    if (this.classList.contains("equals") || isDecimal) return;
+    
     value = e.srcElement.textContent.trim();
-    if (displayMainText.textContent == 0) displayMainText.textContent = value;
+    let mainText = displayMainText.textContent;
+    if (mainText == 0 && !mainText.includes(".") && value != ".") displayMainText.textContent = value;
     else displayMainText.textContent += value;
     value = displayMainText.textContent;
 }
@@ -89,12 +80,13 @@ function clickedOperator(e) {
     _x = Number(value);
     value = 0;
     displayMainText.textContent = value;
+    displayPrevText.textContent += `${_x} ${_operator} `;
 }
 
 function buttonClicked(e) {
+    let isDecimal = displayMainText.textContent.includes(".") && this.classList.contains("decimal");
+    if (this.classList.contains("equals") || isDecimal) return;
     this.classList.add("clicked");
-    if (this.classList.contains("equals")) return;
-    displayPrevText.textContent += e.srcElement.textContent.trim();
 }
 
 function removeTransition(e) {
