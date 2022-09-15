@@ -1,8 +1,6 @@
-let value = 0;
-let _x = 0;
-let _y = 0;
+let value, _x, _y, result = 0;
 let _operator;
-let result = 0;
+let doneCalc = false;
 
 const buttons = document.querySelectorAll("button");
 const displayMainText = document.querySelector(".display h3");
@@ -11,6 +9,7 @@ const numButtons = document.querySelectorAll(".numbers button");
 const operatorButtons = document.querySelectorAll(".sidebar button");
 const equalsBtn = document.querySelector("button.equals");
 const clearBtn = document.querySelector("button.clear");
+const deleteBtn = document.querySelector("button.delete");
 
 const add = (x, y) => x + y;
 const subtract = (x, y) => x - y;
@@ -43,6 +42,15 @@ numButtons.forEach(btn => btn.addEventListener("click", clickedNum));
 operatorButtons.forEach(btn => btn.addEventListener("click", clickedOperator));
 equalsBtn.addEventListener("click", clickedEquals);
 clearBtn.addEventListener("click", clearCalculator);
+deleteBtn.addEventListener("click", deleteInput);
+
+function deleteInput() {
+    if (displayMainText.textContent != 0) {
+        displayMainText.textContent = displayMainText.textContent.slice(0, displayMainText.textContent.length-1);
+        if (!displayMainText.textContent) displayMainText.textContent = 0;
+        value = Number(displayMainText.textContent);
+    }
+}
 
 function clearCalculator() {
     value = _x = _y = result = 0;
@@ -52,7 +60,7 @@ function clearCalculator() {
 }
 
 function clickedEquals() {
-    if (!_x && !_y && !_operator) return;
+    if (!_x && !_y && !_operator || displayPrevText.textContent.includes("=")) return;
     _y = Number(value);
     if (_y == 0 && _operator == "/") {
         alert("You cannot divide by zero!");
@@ -69,8 +77,10 @@ function clickedNum(e) {
     
     value = e.srcElement.textContent.trim();
     let mainText = displayMainText.textContent;
-    if (mainText == 0 && !mainText.includes(".") && value != "." || result) displayMainText.textContent = value;
-    else displayMainText.textContent += value;
+    if (mainText == 0 && !mainText.includes(".") && value != "." || doneCalc) {
+        displayMainText.textContent = value;
+        doneCalc = false;
+    } else displayMainText.textContent += value;
     value = displayMainText.textContent;
 }
 
@@ -80,8 +90,10 @@ function clickedOperator(e) {
         operate(_operator, _x, _y);
         _operator = e.srcElement.textContent.trim();
         displayPrevText.textContent += `${_y} ${_operator} `;
+
         _x = result;
         value = _y = 0;
+        doneCalc = true;
 
     } else {
         _operator = e.srcElement.textContent.trim();

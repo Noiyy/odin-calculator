@@ -85,6 +85,7 @@ p, h3 {
 
 #calculator button:hover {
     border: 2px solid white;
+    color: dimgray;
 }
 
 #calculator button.clicked {
@@ -94,12 +95,27 @@ p, h3 {
     border: 2px solid white;
 }
 
-#calculator button.clear {
+#calculator .removeOptions {
+    display: flex;
+    justify-content: space-between;
+}
+
+#calculator .removeOptions button {
     margin-bottom: 8px;
     font-size: 1.5em;
     padding: 8px 16px;
+    flex: 0 auto;
 }
 
+#calculator .sidebar button {
+    background-color: honeydew;
+}
+#calculator button.clear {
+    background-color: lavender;
+}
+#calculator button.delete {
+    background-color: lightpink;
+}
 #calculator button.equals {
     background-color: lightcyan;
 }
