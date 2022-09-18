@@ -1,5 +1,5 @@
 let value, _x, _y, result = 0;
-let _operator;
+let _operator, btn;
 let doneCalc = false;
 
 const buttons = document.querySelectorAll("button");
@@ -43,9 +43,27 @@ operatorButtons.forEach(btn => btn.addEventListener("click", clickedOperator));
 equalsBtn.addEventListener("click", clickedEquals);
 clearBtn.addEventListener("click", clearCalculator);
 deleteBtn.addEventListener("click", deleteInput);
+window.addEventListener("keydown", pressInput);
+
+function pressInput(e) {
+    btn = document.querySelector(`button[data-key="${e.keyCode}"]`);
+    if (e.keyCode == 13) btn = document.querySelector("button.equals");
+    if (!btn) return;
+    const btnType = btn.parentElement.parentElement;
+    buttonClicked(e, btn);
+
+    if (btnType.className == "numbers") {
+        if (btn.classList.contains("equals")) clickedEquals();
+        else clickedNum(e, btn);
+    } else if (btnType.className == "optionsContainer") clickedOperator(e, btn);
+    else if (btnType.id == "calculator") {
+        if (btn.classList.contains("clear")) clearCalculator();
+        if (btn.classList.contains("delete")) deleteInput();
+    }
+}
 
 function deleteInput() {
-    if (displayMainText.textContent != 0) {
+    if (displayMainText.textContent != 0 && !result) {
         displayMainText.textContent = displayMainText.textContent.slice(0, displayMainText.textContent.length-1);
         if (!displayMainText.textContent) displayMainText.textContent = 0;
         value = Number(displayMainText.textContent);
@@ -71,11 +89,12 @@ function clickedEquals() {
     operate(_operator, _x, _y);
 }
 
-function clickedNum(e) {
-    let isDecimal = displayMainText.textContent.includes(".") && this.classList.contains("decimal");
-    if (this.classList.contains("equals") || isDecimal) return;
+function clickedNum(e, button) {
+    const btnClass = button ? button.classList : this.classList;
+    let isDecimal = displayMainText.textContent.includes(".") && btnClass.contains("decimal");
+    if (btnClass.contains("equals") || displayPrevText.textContent.includes("=") || isDecimal) return;
     
-    value = e.srcElement.textContent.trim();
+    value = button ? button.textContent.trim() : e.srcElement.textContent.trim();
     let mainText = displayMainText.textContent;
     if (mainText == 0 && !mainText.includes(".") && value != "." || doneCalc) {
         displayMainText.textContent = value;
@@ -84,19 +103,20 @@ function clickedNum(e) {
     value = displayMainText.textContent;
 }
 
-function clickedOperator(e) {
+function clickedOperator(e, button) {
+    if (displayPrevText.textContent.includes("=")) return;  
     if (_operator) {
         _y = Number(value);
         operate(_operator, _x, _y);
-        _operator = e.srcElement.textContent.trim();
+        _operator = button ? button.textContent.trim() : e.srcElement.textContent.trim();
         displayPrevText.textContent += `${_y} ${_operator} `;
 
         _x = result;
-        value = _y = 0;
+        value = _y = result = 0;
         doneCalc = true;
 
     } else {
-        _operator = e.srcElement.textContent.trim();
+        _operator = button ? button.textContent.trim() : e.srcElement.textContent.trim();
         if (_x) _y = Number(value);
         else _x = Number(value);
         displayMainText.textContent = value = 0;
@@ -104,10 +124,12 @@ function clickedOperator(e) {
     }
 }
 
-function buttonClicked(e) {
-    let isDecimal = displayMainText.textContent.includes(".") && this.classList.contains("decimal");
-    if (this.classList.contains("equals") || isDecimal) return;
-    this.classList.add("clicked");
+function buttonClicked(e, button) {
+    let isDecimal = button ? displayMainText.textContent.includes(".") && button.classList.contains("decimal")
+    : displayMainText.textContent.includes(".") && this.classList.contains("decimal");
+    if (displayPrevText.textContent.includes("=") || isDecimal) return;
+    if (button) button.classList.add("clicked");
+    else this.classList.add("clicked");
 }
 
 function removeTransition(e) {
