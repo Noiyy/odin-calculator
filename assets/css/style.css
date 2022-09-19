@@ -1,5 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
+@media (max-width: 500px) {
+    #calculator {
+        max-width: 300px !important;
+        padding: 24px !important;
+    }
+
+    #calculator button {
+        padding: 8px 16px !important;
+        font-size: 1.75em !important;
+    }
+
+    #calculator .display {
+        min-height: 90px !important;
+    }
+    #calculator h3 {
+        font-size: 1.75em !important;
+    }
+    #calculator .removeOptions button {
+        font-size: 1em !important;
+    }
+}
+
 *, *:before, *:after {
     box-sizing: border-box;
 }
@@ -24,11 +46,15 @@ body {
     align-items: center;
 }
 
+#main {
+    flex: 1;
+    padding: 32px;
+}
+
 #calculator {
     max-width: 400px;
     padding: 32px;
     border: 2px solid black;
-    margin-top: 64px;
     background-color: lightgray;
 }
 
@@ -118,4 +144,24 @@ p, h3 {
 }
 #calculator button.equals {
     background-color: lightcyan;
+}
+
+footer {
+    background-color: ghostwhite;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+footer a {
+    color: black;
+    text-decoration-color: deeppink;
+    transition: 0.2s;
+}
+
+footer a:hover {
+    color: deeppink;
+    text-decoration: none;
 }
